@@ -202,9 +202,14 @@ class PluginUpdateChecker_2_0 {
         //Query args to append to the URL. Plugins can add their own by using a filter callback (see addQueryArgFilter()).
         $installedVersion = $this->getInstalledVersion();
         $queryArgs['installed_version'] = ($installedVersion !== null) ? $installedVersion : '';
-        if($this->purchaseCode) {
-            $queryArgs['code'] = urlencode($this->purchaseCode);
+        if($this->purchaseCode) { $queryArgs['code'] = urlencode($this->purchaseCode); }
+        try {
+            $urlParts = parse_url(get_site_url());
+            $domain = $urlParts['host'];
+        } catch(Exception $err) {
+            $domain = '';
         }
+        $queryArgs['domain'] = urlencode($domain);
         $queryArgs = apply_filters('puc_request_info_query_args-'.$this->slug, $queryArgs);
 
         //Various options for the wp_remote_get() call. Plugins can filter these, too.
